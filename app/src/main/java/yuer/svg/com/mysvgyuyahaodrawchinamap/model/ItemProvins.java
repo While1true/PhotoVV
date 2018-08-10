@@ -2,6 +2,7 @@ package yuer.svg.com.mysvgyuyahaodrawchinamap.model;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
@@ -9,7 +10,10 @@ import android.graphics.Region;
 import android.text.TextUtils;
 
 import www.wjx.test.photovv.Clickable;
+import www.wjx.test.photovv.IDrawableItem;
 import yuer.svg.com.mysvgyuyahaodrawchinamap.utils.LogUtils;
+
+import static yuer.svg.com.mysvgyuyahaodrawchinamap.view.ChaneseAllMapView.getRandColorCode;
 
 
 /**
@@ -18,10 +22,12 @@ import yuer.svg.com.mysvgyuyahaodrawchinamap.utils.LogUtils;
  * @author 于亚豪
  * @version 1.0 </p> 修改时间：2018/8/2</br> 修改备注：</br>
  */
-public class ItemProvins extends IBean<ItemProvins>  {
-    private int color;
+public class ItemProvins extends IBean<ItemProvins> implements IDrawableItem {
+
+    Region tempRegion = new Region();
+    private int color=Color.parseColor(getRandColorCode());
     private Path path;
-    private boolean isNeedDraw;
+    private boolean isNeedDraw=true;
     private String provinceName;
     private Paint paintText;
     public ItemProvins (Path path){
@@ -117,8 +123,42 @@ public class ItemProvins extends IBean<ItemProvins>  {
         this.path = path;
     }
 
+    @Override
+    public void draw(Canvas canvas, Paint paint, boolean isSelected) {
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(color);
+        canvas.drawPath(path,paint);
+        if(isSelected){
+            paint.clearShadowLayer();
+            paint.setStrokeWidth(2);
+            canvas.drawPath(path, paint);
+            paint.setStyle(Paint.Style.STROKE);
+            int strokeColor = Color.RED;
+            paintText.setColor(strokeColor);
+            paint.setColor(strokeColor);
+            canvas.drawPath(path, paint);
+        }
+    }
+
+    @Override
+    public boolean isInRegion(Matrix matrix, int x, int y) {
+        Path path=new Path();
+        getPath().transform(matrix,path);
+        RectF rectF=new RectF();
+        path.computeBounds(rectF,true);
+        tempRegion.setPath(path,new Region((int)rectF.left,(int)rectF.top,(int)rectF.right,(int)rectF.bottom));
+        return tempRegion.contains(x,y);
+    }
+
     public boolean isNeedDraw() {
-        return isNeedDraw;
+        return true;
+    }
+
+    @Override
+    public RectF getRectF() {
+        RectF bounds = new RectF();
+        path.computeBounds(bounds, true);
+        return bounds;
     }
 
     public void setNeedDraw(boolean needDraw) {

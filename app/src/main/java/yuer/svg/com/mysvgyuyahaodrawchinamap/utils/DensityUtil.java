@@ -87,9 +87,6 @@ public class DensityUtil {
         int height = wm.getDefaultDisplay().getHeight();
         return height;
     }
-    public static int getWeightFrom(int weight){
-        return getScreenIntWidth(MyApplication.context)/weight;
-    }
 
 
     // 获取屏幕像素点
@@ -136,15 +133,4 @@ public class DensityUtil {
         }
         return statusBarHeight;
     }
-    /**
-     * 获取底部navigationBar高度
-     * @return
-     */
-    public static int getNavigationBarHeight() {
-        Resources resources = MyApplication.context.getResources();
-        int resourceId = resources.getIdentifier("navigation_bar_height","dimen", "android");
-        int height = resources.getDimensionPixelSize(resourceId);
-        LogUtils.v("dbw", "Navi height:" + height);
-        return height;
-    }
-}  
+}

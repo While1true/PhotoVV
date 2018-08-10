@@ -11,6 +11,7 @@ import android.graphics.PixelFormat;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
+import android.speech.RecognitionListener;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -25,46 +26,56 @@ import java.util.List;
 
 public class PathDrawable extends Drawable implements Clickable {
 
-	private final Paint mPaint;
+	private Paint mPaint;
 
-	private List<IDrawableItem>mIDrawableItems=new ArrayList<>();
+	private List<IDrawableItem> mIDrawableItems = new ArrayList<>();
 
-	private int selectIndex=-1;
-	Region region = new Region();
+	private PathRegionClickListener listener;
+	private int selectIndex = -1;
 	Region screenRegion = new Region();
-	RectF rectF=new RectF();
+	RectF  tempRectF    = new RectF();
+	RectF pathBound;
+	RectF screenBound;
+
 	public List<IDrawableItem> getIDrawableItems() {
 		return mIDrawableItems;
 	}
 
+	public PathDrawable(PathResult pathResult) {
+		mPaint = new Paint();
+		mPaint.setColor(Color.RED);
+		setIDrawableItems(pathResult.getIDrawableItems());
+		pathBound = pathResult.getPathRectF();
+		screenBound = pathResult.getScreenRectF();
+	}
+
 	public void setIDrawableItems(List<IDrawableItem> IDrawableItems) {
 		mIDrawableItems.clear();
-		selectIndex=-1;
+		selectIndex = -1;
 		mIDrawableItems.addAll(IDrawableItems);
 	}
 
-	public PathDrawable(){
-		mPaint = new Paint();
-		mPaint.setColor(Color.RED);
+	private PathDrawable() {
 	}
+
 	@Override
 	public void draw(@NonNull Canvas canvas) {
-		canvas.drawRect(250+getBounds().left,250+getBounds().top,250+getBounds().left+500,250+getBounds().top+500,mPaint);
+		//		canvas.drawRect(250+getBounds().left,250+getBounds().top,250+getBounds().left+500,250+getBounds().top+500,mPaint);
 		for (IDrawableItem iDrawableItem : mIDrawableItems) {
-			if(iDrawableItem.isNeedDraw()&&isInScreen(iDrawableItem.getPath(),canvas.getMatrix())){
-				iDrawableItem.draw(canvas,mPaint,mIDrawableItems.indexOf(iDrawableItem)==selectIndex);
+			if (iDrawableItem.isNeedDraw() && isInScreen(iDrawableItem.getPath(), canvas.getMatrix())) {
+				iDrawableItem.draw(canvas, mPaint, mIDrawableItems.indexOf(iDrawableItem) == selectIndex);
 			}
 		}
 	}
 
 	@Override
 	public int getIntrinsicWidth() {
-		return 1000;
+		return (int) pathBound.width();
 	}
 
 	@Override
 	public int getIntrinsicHeight() {
-		return 1000;
+		return (int) pathBound.height();
 	}
 
 	@Override
@@ -85,23 +96,31 @@ public class PathDrawable extends Drawable implements Clickable {
 	@Override
 	public void handlerOnClick(Matrix matrix, int x, int y) {
 		for (IDrawableItem iDrawableItem : mIDrawableItems) {
-			if (iDrawableItem.isInRegion(matrix,x,y)){
-				selectIndex=mIDrawableItems.indexOf(iDrawableItem);
+			if (iDrawableItem.isInRegion(matrix, x, y)) {
+				selectIndex = mIDrawableItems.indexOf(iDrawableItem);
+				if (listener != null) {
+					listener.onRegionClicked(selectIndex, iDrawableItem);
+				}
 				invalidateSelf();
 				break;
 			}
 		}
 	}
-	private boolean isInScreen(Path path,Matrix matrix){
-		region.setPath(path,screenRegion);
-		rectF.set(0,0,getIntrinsicWidth(),getIntrinsicHeight());
-		matrix.mapRect(rectF);
-		return region.quickReject((int)rectF.left,(int)rectF.top,(int)rectF.right,(int)rectF.bottom);
+
+	private boolean isInScreen(Path path, Matrix matrix) {
+		path.computeBounds(tempRectF, true);
+		matrix.mapRect(tempRectF);
+		return getScreenRegion().quickReject((int) tempRectF.left, (int) tempRectF.top, (int) tempRectF.right, (int) tempRectF.bottom);
 	}
-	private Region getScreenRegion(){
-		if(screenRegion.isEmpty()){
-			screenRegion.set(0,0,getIntrinsicWidth(),getIntrinsicHeight());
+
+	private Region getScreenRegion() {
+		if (screenRegion.isEmpty()) {
+			screenRegion.set(0, 0, (int) screenBound.width(), (int) screenBound.height());
 		}
 		return screenRegion;
+	}
+
+	public void setRegionClickListener(PathRegionClickListener listener) {
+		this.listener = listener;
 	}
 }

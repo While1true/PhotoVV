@@ -14,7 +14,7 @@ import android.util.Log;
  */
 public class LogUtils {
 
-    public static final boolean DEBUG = MyApplication.DEBUG;
+    public static final boolean DEBUG =true;
 
     public static void d(String tag, String desc) {
         if (DEBUG)

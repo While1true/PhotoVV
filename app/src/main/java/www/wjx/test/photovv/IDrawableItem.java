@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Region;
 
 /**
  * Created by ckckck on 2018/8/10.
@@ -16,7 +17,7 @@ public interface IDrawableItem {
 
 	void draw(Canvas canvas, Paint paint, boolean isSelected);
 
-	boolean isInRegion(Matrix matrix,int x,int y);
+	boolean isInRegion(Matrix matrix, int x, int y);
 
 	boolean isNeedDraw();
 

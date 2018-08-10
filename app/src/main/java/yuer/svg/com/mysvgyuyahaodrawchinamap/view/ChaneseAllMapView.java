@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.graphics.PathParser;
@@ -33,6 +34,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import www.wjx.test.photovv.PathResult;
 import www.wjx.test.photovv.R;
 import yuer.svg.com.mysvgyuyahaodrawchinamap.model.ItemProvins;
 import yuer.svg.com.mysvgyuyahaodrawchinamap.utils.LogUtils;
@@ -171,7 +173,13 @@ public class ChaneseAllMapView extends View {
         }
         postInvalidate();
     }
-
+    public interface VV{
+        void Result(PathResult result);
+    }
+    VV xx;
+public void setcc(VV clickListener){
+        xx=clickListener;
+}
     private void parseMap(){
         new Thread(new Runnable() {
             @SuppressLint("RestrictedApi")
@@ -206,7 +214,8 @@ public class ChaneseAllMapView extends View {
                     }
                     //生成一个大的矩形
                     rectF = new RectF(left,top,right,bottom);
-                    handler.sendEmptyMessage(100);
+//                    handler.sendEmptyMessage(100);
+                            xx.Result(new PathResult(rectF,new RectF(0,0,getMeasuredWidth(),getMeasuredHeight()),list));
                 } catch (ParserConfigurationException e) {
                     e.printStackTrace();
                 } catch (SAXException e) {
