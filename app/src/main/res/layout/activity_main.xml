@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context="www.wjx.test.photovv.MainActivity">
 
-    <com.github.chrisbanes.photoview.PhotoView
+    <www.wjx.test.photovv.PathView.PathView
         android:id="@+id/photo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -1,4 +1,4 @@
-package www.wjx.test.photovv;
+package www.wjx.test.photovv.PathView.Drawable;
 
 import android.graphics.Matrix;
 
@@ -8,7 +8,7 @@ import android.graphics.Matrix;
  * life is short , bugs are too many !
  */
 
-public interface Clickable {
+public interface IPathClickable {
 
 	void handlerOnClick(Matrix matrix, int x, int y);
 }

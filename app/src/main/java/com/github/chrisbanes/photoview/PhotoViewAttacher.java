@@ -31,8 +31,6 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.OverScroller;
 
-import www.wjx.test.photovv.PathDrawable;
-
 /**
  * The component of {@link PhotoView} which does the work allowing for zooming, scaling, panning, etc.
  * It is made public in case you need to subclass something other than AppCompatImageView and still
@@ -203,9 +201,6 @@ public class PhotoViewAttacher implements View.OnTouchListener,
 
                 final float x = e.getX(), y = e.getY();
 
-                if(mImageView.getDrawable() instanceof PathDrawable){
-                    ((PathDrawable) mImageView.getDrawable()).handlerOnClick(mImageView.getImageMatrix(),(int)x,(int)y);
-                }
 
                 if (mViewTapListener != null) {
                     mViewTapListener.onViewTap(mImageView, x, y);

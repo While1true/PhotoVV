@@ -1,11 +1,10 @@
-package www.wjx.test.photovv;
+package www.wjx.test.photovv.PathView.PathItem;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.graphics.Region;
 
 /**
  * Created by ckckck on 2018/8/10.
@@ -13,9 +12,11 @@ import android.graphics.Region;
  * life is short , bugs are too many !
  */
 
-public interface IDrawableItem {
+public interface IPathItem {
 
-	void draw(Canvas canvas, Paint paint, boolean isSelected);
+	void drawBackground(Canvas canvas,Matrix matrix, Paint paint, boolean isSelected);
+	void draw(Canvas canvas,Matrix matrix, Paint paint, boolean isSelected);
+	void drawForgrand(Canvas canvas,Matrix matrix, Paint paint, boolean isSelected);
 
 	boolean isInRegion(Matrix matrix, int x, int y);
 
