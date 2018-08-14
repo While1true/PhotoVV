@@ -58,6 +58,7 @@ public class WorldParse implements IParse<DefaultPathItem> {
 			InputStream is = context.getResources().openRawResource(raw);
 			Document document = builder.parse(is);
 			Element element = document.getDocumentElement();
+			NodeList texts = element.getElementsByTagName("text");
 			NodeList pathListx = element.getElementsByTagName("g");
 			for (int x = 0; x < pathListx.getLength(); x++) {
 				Element itemElementx = (Element) pathListx.item(x);
@@ -103,7 +104,7 @@ public class WorldParse implements IParse<DefaultPathItem> {
 				}
 				rectF.set(left, top, right, bottom);
 			}
-			NodeList texts = element.getElementsByTagName("text");
+
 
 			for (int i = 0; i < texts.getLength(); i++) {
 				try {
