@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import www.wjx.test.photovv.PathView.DefaultParse;
+import www.wjx.test.photovv.PathView.Drawable.PathDrawable;
 import www.wjx.test.photovv.PathView.PathView;
 
 
@@ -12,10 +13,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final DefaultParse defaultParse = new DefaultParse();
-        defaultParse.parse(this, R.raw.china2);
+        final WorldParse defaultParse = new WorldParse();
+        defaultParse.parse(this, R.raw.world);
         final PathView pathView = findViewById(R.id.photo);
-        pathView.setSVG(R.raw.china2);
+       pathView.setImageDrawable(new PathDrawable(defaultParse.getData(),defaultParse.getBound()));
         pathView.setMaximumScale(8);
 
 

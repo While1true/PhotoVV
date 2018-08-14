@@ -18,6 +18,9 @@ public abstract class AbstractPathItem<T extends IPathItemData> implements IPath
 
     @Override
     public boolean isInRegion(Matrix matrix, int x, int y) {
+        if(!pathData.isClickRegion()){
+            return false;
+        }
         getPath().transform(matrix,tempPath);
         tempPath.computeBounds(rectF,true);
         tempRegion2.set((int)rectF.left,(int)rectF.top,(int)rectF.right,(int)rectF.bottom);

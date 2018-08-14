@@ -3,6 +3,7 @@ package www.wjx.test.photovv.PathView;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.support.annotation.RawRes;
@@ -16,6 +17,7 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,58 +25,97 @@ import javax.xml.parsers.ParserConfigurationException;
 
 
 public class DefaultParse implements IParse<DefaultPathItem> {
-    private DocumentBuilder builder;
-    private RectF rectF = new RectF();
-    private List<DefaultPathItem> paths = new ArrayList<>();
-    public DefaultParse() {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        try {
-            builder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-    }
 
-    @Override
-    public void parse(Context context, @RawRes int raw) {
-        float left = -1;
-        float top = -1;
-        float right = -1;
-        float bottom = -1;
-        paths.clear();
-        try {
-            InputStream is = context.getResources().openRawResource(raw);
-            Document document = builder.parse(is);
-            Element element = document.getDocumentElement();
-            NodeList pathList = element.getElementsByTagName("path");
-            for (int i = 0; i < pathList.getLength(); i++) {
-                Element itemElement = (Element) pathList.item(i);
-                String pathData = itemElement.getAttribute("d");
-                String name = itemElement.getAttribute("title");
-                @SuppressLint("RestrictedApi") Path path = PathParser.createPathFromPathData(pathData);
-                DefaultPathItemData defaultPathItemData = new DefaultPathItemData(path,name);
-                defaultPathItemData.setSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,15,context.getResources().getDisplayMetrics()));
-                paths.add(new DefaultPathItem(defaultPathItemData));
+	private DocumentBuilder builder;
+	private RectF                 rectF = new RectF();
+	private List<DefaultPathItem> paths = new ArrayList<>();
 
-                RectF bond = defaultPathItemData.getBond();
-                left = left == -1 ? bond.left : Math.min(left, bond.left);
-                top = left == -1 ? bond.top : Math.min(top, bond.top);
-                right = left == -1 ? bond.right : Math.max(right, bond.right);
-                bottom = left == -1 ? bond.bottom : Math.max(bottom, bond.bottom);
-            }
-            rectF.set(left, top, right, bottom);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	public DefaultParse() {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		try {
+			builder = documentBuilderFactory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public RectF getBound() {
-        return rectF;
-    }
+	@Override
+	public void parse(Context context, @RawRes int raw) {
+		float left = -1;
+		float top = -1;
+		float right = -1;
+		float bottom = -1;
+		paths.clear();
+		try {
+			InputStream is = context.getResources().openRawResource(raw);
+			Document document = builder.parse(is);
+			Element element = document.getDocumentElement();
+			NodeList pathList = element.getElementsByTagName("path");
+			for (int i = 0; i < pathList.getLength(); i++) {
+				try {
+					Element itemElement = (Element) pathList.item(i);
+					String pathData = itemElement.getAttribute("d");
+					String fill = itemElement.getAttribute("fill");
+					boolean isfill = true;
+					int color = 0;
+					if (fill == null || fill.equals("none")) {
+						isfill = false;
+						String stoken = itemElement.getAttribute("stroke");
 
-    @Override
-    public List getData() {
-        return paths;
-    }
+						color = Color.parseColor(stoken);
+					} else {
+						color = Color.parseColor(fill);
+					}
+					@SuppressLint("RestrictedApi") Path path = PathParser.createPathFromPathData(pathData);
+					DefaultPathItemData defaultPathItemData = new DefaultPathItemData(path, isfill,
+																					  color == 0 ? Color.parseColor(getRandColorCode()) :
+																					  color);
+					defaultPathItemData.setSize(
+						TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, context.getResources().getDisplayMetrics()));
+					paths.add(new DefaultPathItem(defaultPathItemData));
+					if (paths.size() == 275) {
+						System.out.println();
+					}
+					RectF bond = defaultPathItemData.getBond();
+					left = left == -1 ? bond.left : Math.min(left, bond.left);
+					top = left == -1 ? bond.top : Math.min(top, bond.top);
+					right = left == -1 ? bond.right : Math.max(right, bond.right);
+					bottom = left == -1 ? bond.bottom : Math.max(bottom, bond.bottom);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			rectF.set(left, top, right, bottom);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public RectF getBound() {
+		return rectF;
+	}
+
+	@Override
+	public List getData() {
+		return paths;
+	}
+
+	/**
+	 * 获取十六进制的颜色代码.例如 "#6E36B4" , For HTML ,
+	 *
+	 * @return String
+	 */
+	protected static String getRandColorCode() {
+		String r, g, b;
+		Random random = new Random();
+		r = Integer.toHexString(random.nextInt(256)).toUpperCase();
+		g = Integer.toHexString(random.nextInt(256)).toUpperCase();
+		b = Integer.toHexString(random.nextInt(256)).toUpperCase();
+		r = r.length() == 1 ? "0" + r : r;
+		g = g.length() == 1 ? "0" + g : g;
+		b = b.length() == 1 ? "0" + b : b;
+		//        LogUtils.e("");
+		return "#" + r + g + b;
+	}
 }

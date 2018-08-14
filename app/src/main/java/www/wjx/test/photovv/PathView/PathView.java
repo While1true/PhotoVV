@@ -37,6 +37,7 @@ public class PathView extends PhotoView implements OnViewTapListener {
         Drawable drawable = getDrawable();
         if (drawable instanceof PathDrawable) {
             ((PathDrawable) drawable).setMatrix(getImageMatrix());
+            ((PathDrawable) drawable).getScreenBond().set(0,0,getMeasuredWidth(),getMeasuredHeight());
             ((PathDrawable) drawable).setRegionClickListener(onPathRegionClickListener);
             drawable.draw(canvas);
         } else {
@@ -69,7 +70,7 @@ public class PathView extends PhotoView implements OnViewTapListener {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         if (parse != null) {
-            setImageDrawable(new PathDrawable(parse.getData(), parse.getBound(), new Rect(0, 0, getMeasuredWidth(), getMeasuredHeight())));
+            setImageDrawable(new PathDrawable(parse.getData(), parse.getBound()));
             parse = null;
         }
     }

@@ -7,4 +7,5 @@ import android.graphics.RectF;
 public interface IPathItemData {
     Path getPath();
     RectF getBond();
+    boolean isClickRegion();
 }

@@ -12,13 +12,13 @@ public class DefaultPathItemData implements IPathItemData {
     private Path path;
     private RectF rectF = new RectF();
     private int color;
-    private String name;
     private float size=60;
+    private boolean isfill=true;
 
-    public DefaultPathItemData(Path path,String name) {
+    public DefaultPathItemData(Path path,boolean isfill,int color) {
         this.path = path;
-        this.color = Color.parseColor(getRandColorCode());
-        this.name=name;
+        this.color = color;
+        this.isfill=isfill;
         path.computeBounds(rectF, true);
     }
 
@@ -32,12 +32,21 @@ public class DefaultPathItemData implements IPathItemData {
         return rectF;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean isClickRegion() {
+        return isfill;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public boolean isIsfill() {
+        return isfill;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
+    public void setIsfill(boolean isfill) {
+        this.isfill = isfill;
     }
 
     public float getSize() {
@@ -51,20 +60,5 @@ public class DefaultPathItemData implements IPathItemData {
     public int getColor() {
         return color;
     }
-    /**
-     * 获取十六进制的颜色代码.例如 "#6E36B4" , For HTML ,
-     * @return String
-     */
-    private static String getRandColorCode(){
-        String r,g,b;
-        Random random = new Random();
-        r = Integer.toHexString(random.nextInt(256)).toUpperCase();
-        g = Integer.toHexString(random.nextInt(256)).toUpperCase();
-        b = Integer.toHexString(random.nextInt(256)).toUpperCase();
-        r = r.length()==1 ? "0" + r : r ;
-        g = g.length()==1 ? "0" + g : g ;
-        b = b.length()==1 ? "0" + b : b ;
-//        LogUtils.e("");
-        return "#"+r+g+b;
-    }
+
 }

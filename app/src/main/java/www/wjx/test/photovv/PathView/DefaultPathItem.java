@@ -20,6 +20,9 @@ public class DefaultPathItem extends AbstractPathItem<DefaultPathItemData> {
     @Override
     public void draw(Canvas canvas, Matrix matrix, Paint paint, boolean isSelected) {
         mPaint.set(paint);
+        if(!getPathData().isIsfill()){
+            mPaint.setStyle(Paint.Style.STROKE);
+        }
         mPaint.setColor(getPathData().getColor());
         tempPath.reset();
         getPath().transform(matrix, tempPath);
@@ -33,19 +36,4 @@ public class DefaultPathItem extends AbstractPathItem<DefaultPathItemData> {
         }
       }
 
-    @Override
-    public void drawForgrand(Canvas canvas, Matrix matrix, Paint paint, boolean isSelected) {
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setTextSize(getPathData().getSize());
-        tempPath.computeBounds(rectF,true);
-        mPaint.setStrokeWidth(5);
-
-        float x = rectF.left + rectF.width() / 2 - mPaint.measureText(getPathData().getName()) / 2;
-        float y = rectF.top + rectF.height() / 2;
-        mPaint.setColor(0x22FFFFFF);
-        float v = mPaint.measureText(getPathData().getName()) / getPathData().getName().length();
-        canvas.drawRect(x,y-v,x+mPaint.measureText(getPathData().getName()),y,mPaint);
-        mPaint.setColor(Color.WHITE);
-        canvas.drawText(getPathData().getName(), x, y,mPaint);
-    }
 }
