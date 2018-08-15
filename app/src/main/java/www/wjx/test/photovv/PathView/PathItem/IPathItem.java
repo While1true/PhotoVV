@@ -25,4 +25,5 @@ public interface IPathItem {
 	RectF getRectF();
 
 	Path getPath();
+	<T extends IPathItemData>T getPathData();
 }

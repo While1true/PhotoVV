@@ -21,6 +21,7 @@ import www.wjx.test.photovv.PathView.PathItem.IPathItem;
 public class PathDrawable extends Drawable implements IPathClickable {
 
 	private List<IPathItem> mIPathItems = new ArrayList<>();
+	private List<IPathItem> mIPathCaches = new ArrayList<>();
 
 	private int selectIndex = -1;
 
@@ -53,6 +54,7 @@ public class PathDrawable extends Drawable implements IPathClickable {
 
 	@Override
 	public void draw(@NonNull Canvas canvas) {
+		mIPathCaches.clear();
 		int save = canvas.save();
 		canvas.clipRect(screenBond);
 		int size = mIPathItems.size();
@@ -63,6 +65,7 @@ public class PathDrawable extends Drawable implements IPathClickable {
 			IPathItem iPathItem = mIPathItems.get(i);
 			if (iPathItem.isNeedDraw() && isInScreen(iPathItem.getPath(), matrix)) {
 				iPathItem.draw(canvas, matrix, mPaint, i == selectIndex);
+				mIPathCaches.add(iPathItem);
 			}
 		}
 		if (willDrawBgAndFG()) {
@@ -173,6 +176,10 @@ public class PathDrawable extends Drawable implements IPathClickable {
 				iPathItem.drawForgrand(canvas, matrix, mPaint, i == selectIndex);
 			}
 		}
+	}
+
+	public Paint getPaint() {
+		return mPaint;
 	}
 
 	public Rect getScreenBond() {

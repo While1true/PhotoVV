@@ -38,7 +38,7 @@ public class Name {
 		floats[5]=Float.parseFloat(split[5]);
 		floats[6]=0f;
 		floats[7]=0f;
-		floats[7]=1f;
+		floats[8]=1f;
 		Matrix matrix1 = new Matrix();
 		matrix1.setValues(floats);
 		System.out.println(matrix1);

@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.support.annotation.RawRes;
 import android.support.v4.graphics.PathParser;
+import android.text.TextUtils;
 import android.util.TypedValue;
 
 import org.w3c.dom.DOMException;
@@ -33,9 +34,9 @@ import www.wjx.test.photovv.PathView.IParse;
 public class WorldParse implements IParse<DefaultPathItem> {
 
 	private DocumentBuilder builder;
-	private RectF                 rectF = new RectF();
-	private List<DefaultPathItem> paths = new ArrayList<>();
-	private List<Name> mNames = new ArrayList<>();
+	private RectF                 rectF  = new RectF();
+	private List<DefaultPathItem> paths  = new ArrayList<>();
+	private List<Name>            mNames = new ArrayList<>();
 
 	public WorldParse() {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -75,13 +76,17 @@ public class WorldParse implements IParse<DefaultPathItem> {
 						String fill = itemElement.getAttribute("fill");
 						boolean isfill = true;
 						int color = 0;
-						if (fill == null || fill.equals("none")) {
+						if (fill.equals("none")) {
 							isfill = false;
 							String stoken = itemElement.getAttribute("stroke");
 
 							color = Color.parseColor(stoken);
 						} else {
-							color = Color.parseColor(fill);
+							if (fill.equals("")) {
+								color = Color.parseColor("#000000");
+							} else {
+								color = Color.parseColor(fill);
+							}
 						}
 						@SuppressLint("RestrictedApi") Path path = PathParser.createPathFromPathData(pathData);
 						WorldPathItemData defaultPathItemData = new WorldPathItemData(path, isfill,
@@ -105,16 +110,23 @@ public class WorldParse implements IParse<DefaultPathItem> {
 				rectF.set(left, top, right, bottom);
 			}
 
-
 			for (int i = 0; i < texts.getLength(); i++) {
 				try {
 					Element item = (Element) texts.item(i);
 					String transform = item.getAttribute("transform");
-					Element itemc = (Element) item.getFirstChild();
+					Element itemc = item;
+					try {
+						itemc = (Element) item.getFirstChild();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					String nodeValue = itemc.getTextContent();
 					String fill = itemc.getAttribute("fill");
-					String nodeValue = itemc.getNodeValue();
-					mNames.add(new Name(nodeValue,transform,Color.parseColor(fill)));
-				} catch (DOMException e) {
+					if (nodeValue.equals("C H I N A")) {
+						System.out.println("---");
+					}
+					mNames.add(new Name(nodeValue, transform, Color.parseColor(TextUtils.isEmpty(fill) ? "#000000" : fill)));
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -122,6 +134,7 @@ public class WorldParse implements IParse<DefaultPathItem> {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println(mNames.size());
 	}
 
 	@Override
@@ -132,6 +145,10 @@ public class WorldParse implements IParse<DefaultPathItem> {
 	@Override
 	public List getData() {
 		return paths;
+	}
+
+	public List<Name> getNames() {
+		return mNames;
 	}
 
 	/**
