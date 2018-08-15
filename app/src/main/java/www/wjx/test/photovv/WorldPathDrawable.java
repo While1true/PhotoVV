@@ -2,6 +2,7 @@ package www.wjx.test.photovv;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Path;
 import android.graphics.RectF;
 
 import java.util.ArrayList;
@@ -28,6 +29,17 @@ public class WorldPathDrawable extends PathDrawable {
 
 	@Override
 	protected boolean willDrawBgAndFG() {
+		return true;
+	}
+
+	@Override
+	protected boolean isVisableDraw(Matrix matrix, RectF rectF) {
+		float[] values = new float[9];
+		matrix.getValues(values);
+		float value = values[Matrix.MSCALE_X];
+		if(value<2.5&&(rectF.width()<15||rectF.height()<15)){
+			return false;
+		}
 		return true;
 	}
 

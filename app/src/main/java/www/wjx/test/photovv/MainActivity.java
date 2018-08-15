@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         final PathView pathView = findViewById(R.id.photo);
         WorldPathDrawable drawable = new WorldPathDrawable(defaultParse.getNames(),defaultParse.getData(), defaultParse.getBound());
         pathView.setImageDrawable(drawable);
-        pathView.setMaximumScale(8);
+        pathView.setMaximumScale(12);
 
 
     }

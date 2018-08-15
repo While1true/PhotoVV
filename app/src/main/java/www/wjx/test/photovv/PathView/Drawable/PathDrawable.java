@@ -78,9 +78,15 @@ public class PathDrawable extends Drawable implements IPathClickable {
 		tempPath.reset();
 		path.transform(matrix, tempPath);
 		tempPath.computeBounds(rectF, true);
+		if(!isVisableDraw(matrix,rectF)) {
+			return false;
+		}
 		region2.set((int) rectF.left, (int) rectF.top, (int) rectF.right, (int) rectF.bottom);
 		region.setPath(tempPath, region2);
 		return !region.quickReject(screenBond);
+	}
+	protected boolean isVisableDraw(Matrix matrix,RectF rectF){
+		return true;
 	}
 
 	@Override
